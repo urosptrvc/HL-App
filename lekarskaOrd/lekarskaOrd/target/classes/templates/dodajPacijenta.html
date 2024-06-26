@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeteof.com">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+<link rel="stylesheet" href="" th:href="@{/css/style.css}" />
+<title>Harmony Life</title>
+</head>
+<body class="dodajpacijenta">
+
+	<nav class="navbar navbar-expand-lg navbar-light bg-dark">
+		<a class="home navbar-brand text-white mr-5" href="/"><span style="text-shadow: 1px 1px 2px black;"> Harmony Life </span><img src="/images/logo.svg" width=35/></a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto">
+				<!-- <li class="nav-item active"><a class="nav-link text-white btn btn-danger mr-3"
+					href="/">Pocetna <span class="sr-only">(current)</span></a></li> -->
+				<li class="nav-item"><a class="nav-link text-white btn btn-danger mr-3 text-uppercase"
+					href="pacijenti">Pacijenti</a></li>
+				<li class="nav-item"><a class="nav-link text-white btn btn-danger mr-3 text-uppercase"
+					href="termini">Termini</a></li>
+			</ul>
+			<div>
+				<a class="nav-link text-white btn btn-danger text-uppercase mr-5" href="dodaj_pacijenta">Dodaj
+					Pacijenta</a>
+			</div>
+		</div>
+	</nav>
+
+    <div class="container my-5 p-5">
+        <h4 class="formnaslov text-center text-uppercase">Dodaj novog pacijenta</h4>
+        <form class="col-md-4 offset-md-4" th:action="@{/save}" method="post">
+            <div class="mb-3">
+                <label for="ime" class="form-label">Ime</label>
+                <input type="text" class="form-control" name="ime" required>
+                <div class="error-message">Ime je obavezno.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="prezime" class="form-label">Prezime</label>
+                <input type="text" class="form-control" name="prezime" required>
+                <div class="error-message">Prezime je obavezno.</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Pol</label><br>
+                <input type="radio" name="pol" value="Muško" required> Muško
+                <input type="radio" name="pol" value="Žensko" required> Žensko
+                <div id="pol-error" class="error-message">Pol je obavezan.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="jmbg" class="form-label">JMBG</label>
+                <input type="text" class="form-control" name="jmbg" required>
+                <div class="error-message">JMBG je obavezan.</div>
+            </div>
+            <center><button type="submit" class="btn btn-outline-success btn-lg" id="submitBtn">Dodaj</button></center>
+        </form>
+    </div>
+	
+       <script>
+        function checkFormFields() {
+            const formFields = document.querySelectorAll('.form-control');
+            const radioButtons = document.querySelectorAll('input[name="pol"]');
+            const submitButton = document.getElementById('submitBtn');
+            let allFilled = true;
+
+            formFields.forEach(field => {
+                const errorMessage = field.nextElementSibling;
+                if (field.name === 'jmbg') {
+                    if (!/^\d{11}$/.test(field.value.trim())) {
+                        allFilled = false;
+                        if (errorMessage) {
+                            errorMessage.textContent = 'JMBG mora da sadrži tačno 11 cifara.';
+                            errorMessage.style.display = 'block';
+                        }
+                    } else {
+                        if (errorMessage) {
+                            errorMessage.style.display = 'none';
+                        }
+                    }
+                } else {
+                    if (field.value.trim() === '') {
+                        allFilled = false;
+                        if (errorMessage) {
+                            errorMessage.style.display = 'block';
+                        }
+                    } else {
+                        if (errorMessage) {
+                            errorMessage.style.display = 'none';
+                        }
+                    }
+                }
+            });
+
+            const radioSelected = Array.from(radioButtons).some(radio => radio.checked);
+            const radioErrorMessage = document.getElementById('pol-error');
+            if (!radioSelected) {
+                allFilled = false;
+                radioErrorMessage.style.display = 'block';
+            } else {
+                radioErrorMessage.style.display = 'none';
+            }
+
+            submitButton.disabled = !allFilled;
+            return allFilled;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const formFields = document.querySelectorAll('.form-control');
+            const radioButtons = document.querySelectorAll('input[name="pol"]');
+
+            formFields.forEach(field => {
+                field.addEventListener('input', checkFormFields);
+            });
+
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', checkFormFields);
+            });
+
+            form.addEventListener('submit', function(event) {
+                if (!checkFormFields()) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+
+
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+</body>
+</html>
